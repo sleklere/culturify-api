@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const fs = require('fs')
+const routes = require('./src/routes/routes.js')
 
 // ---------------------
 app.use(bodyParser.json())
@@ -15,28 +16,34 @@ app.use((req, res, next) => {
 app.listen(5000, () => {
   console.log('Server listening on port 5000')
 })
+app.use('/', routes)
 
 ////////////////////////////////////
 
-const users = JSON.parse(fs.readFileSync('users.json', 'utf-8'))
+// const users = JSON.parse(fs.readFileSync('users.json', 'utf-8'))
 
-app.get('/test-users', (req, res) => {
-  return res.json(users)
-})
+// app.get('/test-users', (req, res) => {
+//   return res.json(users)
+// })
 
-app.get('/posts', (req, res) => {
-  let allPosts = []
+// app.get('/posts', (req, res) => {
+//   let allPosts = []
 
-  for (let user of users) {
-    user.posts?.forEach(post => allPosts.push(post))
-  }
+//   for (let user of users) {
+//     user.posts?.forEach(post => allPosts.push(post))
+//   }
 
-  return res.json(allPosts)
-})
+//   return res.json(allPosts)
+// })
 
-app.get('/test-users/:userId', (req, res) => {
-  const id = req.params.userId
-  const user = users.find(user => user.id == id)
+// app.get('/test-users/:userId', (req, res) => {
+//   const id = req.params.userId
+//   const user = users.find(user => user.id == id)
 
-  return res.status(200).json(user)
-})
+//   return res.status(200).json(user)
+// })
+
+// app.get('/users', async (req, res) => {
+//   const allUsers = await Users.findAll()
+//   res.send(allUsers.json())
+// })
