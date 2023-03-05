@@ -31,11 +31,13 @@ module.exports = (sequelize, dataTypes) => {
       type: dataTypes.STRING,
       allowNull: false,
     },
-    ig_user: {
+    igUser: {
+      field: 'ig_user',
       type: dataTypes.STRING,
       allowNull: true,
     },
-    tw_user: {
+    twUser: {
+      field: 'tw_user',
       type: dataTypes.STRING,
       allowNull: true,
     },
@@ -47,6 +49,13 @@ module.exports = (sequelize, dataTypes) => {
   }
 
   const User = sequelize.define('User', columns, config)
+
+  User.associate = models => {
+    User.hasMany(models.Post, {
+      foreignKey: 'author_id',
+      as: 'posts',
+    })
+  }
 
   return User
 }
