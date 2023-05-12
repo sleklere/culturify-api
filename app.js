@@ -1,49 +1,47 @@
-const express = require('express')
-const app = express()
-const bodyParser = require('body-parser')
-const fs = require('fs')
-const routes = require('./src/routes/routes.js')
+const express = require('express');
 
-// ---------------------
-app.use(bodyParser.json())
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-  next()
-})
+const morgan = require('morgan');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 
-app.listen(5000, () => {
-  console.log('Server listening on port 5000')
-})
-app.use('/', routes)
+const app = express();
 
-////////////////////////////////////
+// MIDDLEWARES
+// Security HTTP headers
+app.use(helmet()); // Best to set it at the beginning so that we make sure the headers are always set
 
-// const users = JSON.parse(fs.readFileSync('users.json', 'utf-8'))
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 
-// app.get('/test-users', (req, res) => {
-//   return res.json(users)
-// })
+express.json();
 
-// app.get('/posts', (req, res) => {
-//   let allPosts = []
+app.use(mongoSanitize());
 
-//   for (let user of users) {
-//     user.posts?.forEach(post => allPosts.push(post))
-//   }
+app.use(xss());
 
-//   return res.json(allPosts)
-// })
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsQuantity',
+      'ratingsAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  })
+);
 
-// app.get('/test-users/:userId', (req, res) => {
-//   const id = req.params.userId
-//   const user = users.find(user => user.id == id)
+// Test route
+app.get('/', (req, res) => {
+  console.log('This is a test route');
+  res.status(200).json({
+    status: 'success',
+    data: 'route working',
+  });
+});
 
-//   return res.status(200).json(user)
-// })
-
-// app.get('/users', async (req, res) => {
-//   const allUsers = await Users.findAll()
-//   res.send(allUsers.json())
-// })
+module.exports = app;
