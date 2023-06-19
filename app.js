@@ -9,6 +9,13 @@ const hpp = require('hpp');
 const app = express();
 
 // MIDDLEWARES
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
+
 // Security HTTP headers
 app.use(helmet()); // Best to set it at the beginning so that we make sure the headers are always set
 
