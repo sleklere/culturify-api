@@ -6,6 +6,12 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 
+// DELETE LATER - it's only so that mongoose doesn't through an error about the schema
+const Like = require('./models/Like');
+
+const postsRouter = require('./routes/postRoutes');
+const usersRouter = require('./routes/userRoutes');
+
 const app = express();
 
 // MIDDLEWARES
@@ -23,7 +29,11 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-express.json();
+app.use(
+  express.json({
+    limit: '10kb',
+  })
+);
 
 app.use(mongoSanitize());
 
@@ -42,13 +52,11 @@ app.use(
   })
 );
 
-// Test route
-app.get('/', (req, res) => {
-  console.log('This is a test route');
-  res.status(200).json({
-    status: 'success',
-    data: 'route working',
-  });
-});
+app.use('/api/v1/posts', postsRouter);
+app.use('/api/v1/users', usersRouter);
+
+// app.all('*', (req,res,next)=> {
+//   next()
+// })
 
 module.exports = app;

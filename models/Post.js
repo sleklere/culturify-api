@@ -4,23 +4,40 @@ const postSchema = new mongoose.Schema(
   {
     text: {
       type: String,
-      required: [true, "Can't make an empty post"],
+      required: false,
       maxlength: [100, "A post can't have more than 100 characters"],
     },
     createdAt: {
       type: Date,
       default: Date.now(),
     },
-    author: {
+    user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
+      required: [true, 'A post must be made by a user'],
     },
-    comments: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Comment',
-      },
-    ],
+    // comments: [
+    //   {
+    //     type: mongoose.Schema.ObjectId,
+    //     ref: 'Comment',
+    //   },
+    // ],
+    // likes: [
+    //   {
+    //     type: mongoose.Schema.ObjectId,
+    //     ref: 'Like',
+    //   },
+    // ],
+    numComments: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    numLikes: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
   },
   // the following is to make it so that virtual fields (the ones that are not stored in a DB and are - for example - calculated) appear whenever there is an output
   {
@@ -30,7 +47,6 @@ const postSchema = new mongoose.Schema(
 );
 
 // Virtual populate
-// As i don't want the comments to always appear in the output, i set it up as a virtual property, so that i can choose when to populate it.
 postSchema.virtual('comments', {
   ref: 'Comment',
   foreignField: 'post',
@@ -39,11 +55,23 @@ postSchema.virtual('comments', {
 
 // Query middleware
 postSchema.pre(/^find/, function (next) {
+  this.start = Date.now();
+  next();
+});
+
+postSchema.pre(/^find/, function (next) {
   this.populate({
-    path: 'author',
+    path: 'user',
     // select: ''
   });
 
+  next();
+});
+
+postSchema.post(/^find/, function (docs, next) {
+  // console.log(this);
+  console.log(`Query took ${Date.now() - this.start} milliseconds`);
+  // console.log(docs);
   next();
 });
 
