@@ -11,6 +11,8 @@ const Like = require('./models/Like');
 
 const postsRouter = require('./routes/postRoutes');
 const usersRouter = require('./routes/userRoutes');
+const globalErrorHandler = require('./controllers/errorController');
+const AppError = require('./utils/appError');
 
 const app = express();
 
@@ -55,8 +57,10 @@ app.use(
 app.use('/api/v1/posts', postsRouter);
 app.use('/api/v1/users', usersRouter);
 
-// app.all('*', (req,res,next)=> {
-//   next()
-// })
+app.all('*', (req, res, next) =>
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404))
+);
+
+app.use(globalErrorHandler);
 
 module.exports = app;

@@ -1,49 +1,23 @@
 const Comment = require('../models/Comment');
+const Like = require('../models/Like');
 const Post = require('../models/Post');
 const catchAsync = require('../utils/catchAsync');
+const { getOne, getAll, createOne } = require('./handlers');
 
-exports.getAllPosts = catchAsync(async (req, res, next) => {
-  const posts = await Post.find();
+exports.getAllPosts = getAll(Post);
 
-  res.status(200).json({
-    status: 'success',
-    results: posts.length,
-    data: {
-      posts,
-    },
-  });
-});
+exports.getPostsFromUser = getAll(Post, 'user');
+
 exports.getFeedPosts = async (req, res, next) => {};
-exports.getPost = catchAsync(async (req, res, next) => {
-  const post = await Post.findById(req.params.id).populate('comments');
-  // .populate('likes');
 
-  // if (!post) return next(new AppError('No post found with that ID', 404))
+exports.getPost = getOne(Post, { path: 'comments' });
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      post,
-    },
-  });
-});
-
-exports.createPost = catchAsync(async (req, res, next) => {
-  const newPost = await Post.create(req.body);
-
-  res.status(201).json({
-    status: 'success',
-    data: {
-      post: newPost,
-    },
-  });
-});
+exports.createPost = createOne(Post);
 
 exports.commentPost = catchAsync(async (req, res, next) => {
   const comment = await Comment.create(req.body);
 
   const postRelated = await Post.findById(req.body.post);
-  postRelated.comments.push(comment);
   postRelated.numComments += 1;
   await postRelated.save();
 
@@ -55,9 +29,19 @@ exports.commentPost = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.likePost = async (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not defined!',
+exports.likePost = catchAsync(async (req, res) => {
+  const like = await Like.create(req.body);
+
+  const postRelated = await Post.findById(req.body.post);
+
+  postRelated.numLikes += 1;
+
+  await postRelated.save();
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      like,
+    },
   });
-};
+});

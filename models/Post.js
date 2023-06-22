@@ -53,6 +53,12 @@ postSchema.virtual('comments', {
   localField: '_id',
 });
 
+postSchema.virtual('likes', {
+  ref: 'Like',
+  foreignField: 'post',
+  localField: '_id',
+});
+
 // Query middleware
 postSchema.pre(/^find/, function (next) {
   this.start = Date.now();
