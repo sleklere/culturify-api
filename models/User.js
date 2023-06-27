@@ -59,6 +59,13 @@ userSchema.pre('save', async function (next) {
 // pre-find => query active users only (find({active: {$ne: false}}))
 // not equal to false instead of equal true because active users do not have the active property explicitly set to true
 
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

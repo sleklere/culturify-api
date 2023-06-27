@@ -6,9 +6,6 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 
-// DELETE LATER - it's only so that mongoose doesn't through an error about the schema
-const Like = require('./models/Like');
-
 const postsRouter = require('./routes/postRoutes');
 const usersRouter = require('./routes/userRoutes');
 const globalErrorHandler = require('./controllers/errorController');
