@@ -1,13 +1,28 @@
 const express = require('express');
-const { createUser } = require('../controllers/userController');
 const { getPostsFromUser } = require('../controllers/postController');
+const {
+  signup,
+  login,
+  logout,
+  protect,
+} = require('../controllers/authController');
+const { getUser, getAllUsers } = require('../controllers/userController');
 
 const router = express.Router();
 
-router.route('/').post(createUser);
+router.post('/signup', signup);
+router.post('/login', login);
+router.get('/logout', logout);
+
+// PROTECTED ROUTES
+router.use(protect);
 
 router.get('/:userId/posts', getPostsFromUser);
 
-// signup
+router.get('/', getAllUsers);
+
+router.route('/:id').get(getUser);
+//   .patch(protect, updateUser)
+//   .delete(protect, deleteUser);
 
 module.exports = router;

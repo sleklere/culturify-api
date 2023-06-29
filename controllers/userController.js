@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const catchAsync = require('../utils/catchAsync');
+const { getOne, getAll } = require('./handlers');
 
 exports.createUser = catchAsync(async (req, res, next) => {
   const user = await User.create({
@@ -21,3 +22,7 @@ exports.createUser = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.getAllUsers = getAll(User);
+
+exports.getUser = getOne(User);

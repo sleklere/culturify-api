@@ -49,5 +49,5 @@ exports.createOne = Model =>
       },
     });
   });
-exports.updateOne = Model => catchAsync(async (req, res, next) => {});
-exports.deleteOne = Model => catchAsync(async (req, res, next) => {});
+// exports.updateOne = Model => catchAsync(async (req, res, next) => {});
+// exports.deleteOne = Model => catchAsync(async (req, res, next) => {});

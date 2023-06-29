@@ -6,6 +6,7 @@ const {
   commentPost,
   likePost,
 } = require('../controllers/postController');
+const { protect } = require('../controllers/authController');
 
 const router = express.Router();
 
@@ -16,10 +17,10 @@ const router = express.Router();
 router.route('/').get(getAllPosts).post(createPost);
 // GET one post
 // POST  - comment a post
-router.route('/:id').get(getPost);
-router.post('/:id/comment', commentPost);
+router.route('/:id').get(protect, getPost);
+router.post('/:id/comment', protect, commentPost);
 // POST  - like a post
-router.post('/:id/like', likePost);
+router.post('/:id/like', protect, likePost);
 
 // DELETE a post
 
