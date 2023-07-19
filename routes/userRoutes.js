@@ -17,11 +17,9 @@ router.get('/logout', logout);
 // PROTECTED ROUTES
 router.use(protect);
 
-router.get('/:userId/posts', getPostsFromUser);
-
-router.get('/', getAllUsers);
-
 router.route('/:id').get(getUser);
+router.get('/:userId/posts', getPostsFromUser);
+router.get('/', getAllUsers);
 //   .patch(protect, updateUser)
 //   .delete(protect, deleteUser);
 

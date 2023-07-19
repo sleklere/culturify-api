@@ -6,9 +6,15 @@ const handleCastErrorDB = err => {
 };
 
 const handleDuplicateFieldsDB = err => {
-  const message = `Duplicate field value: ${Object.entries(err.keyValue)
-    .join(' ')
-    .replaceAll(',', ': ')}. Please use another value!`;
+  let message;
+  // send custom error message back to the client
+  if ('email' in err.keyValue) {
+    message = 'A user with that email already exists';
+  } else {
+    message = `Duplicate field value: ${Object.entries(err.keyValue)
+      .join(' ')
+      .replaceAll(',', ': ')}. Please use another value!`;
+  }
   return new AppError(message, 400);
 };
 

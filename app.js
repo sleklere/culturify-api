@@ -1,5 +1,6 @@
 const express = require('express');
 
+const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -14,12 +15,20 @@ const AppError = require('./utils/appError');
 const app = express();
 
 // MIDDLEWARES
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
+    credentials: true,
+  })
+);
+
+// app.use((req, res, next) => {
+//   res.setHeader('Access-Control-Allow-Origin', '*');
+//   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE');
+//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+//   next();
+// });
 
 // Security HTTP headers
 app.use(helmet()); // Best to set it at the beginning so that we make sure the headers are always set
