@@ -2,7 +2,7 @@ const Comment = require('../models/Comment');
 const Like = require('../models/Like');
 const Post = require('../models/Post');
 const catchAsync = require('../utils/catchAsync');
-const { getOne, getAll, createOne } = require('./handlers');
+const { getOne, getAll, createOne, deleteOne } = require('./handlers');
 
 exports.getAllPosts = getAll(Post);
 
@@ -13,6 +13,12 @@ exports.getFeedPosts = async (req, res, next) => {};
 exports.getPost = getOne(Post, { path: 'comments' });
 
 exports.createPost = createOne(Post);
+
+exports.deletePost = deleteOne(Post);
+
+exports.deleteComment = deleteOne(Comment);
+
+exports.deleteLike = deleteOne(Like);
 
 exports.commentPost = catchAsync(async (req, res, next) => {
   const comment = await Comment.create(req.body);

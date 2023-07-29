@@ -66,10 +66,7 @@ postSchema.pre(/^find/, function (next) {
 });
 
 postSchema.pre(/^find/, function (next) {
-  this.populate({
-    path: 'user',
-    // select: ''
-  });
+  this.populate('user').populate({ path: 'likes', select: 'user' });
 
   next();
 });

@@ -1,3 +1,5 @@
+const Comment = require('../models/Comment');
+const Like = require('../models/Like');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
@@ -49,5 +51,27 @@ exports.createOne = Model =>
       },
     });
   });
+
 // exports.updateOne = Model => catchAsync(async (req, res, next) => {});
-// exports.deleteOne = Model => catchAsync(async (req, res, next) => {});
+
+exports.deleteOne = Model =>
+  catchAsync(async (req, res, next) => {
+    const doc = await Model.findByIdAndDelete(req.params.id);
+
+    if (!doc) {
+      return next(new AppError('No document found with that ID', 404));
+    }
+
+    const { originalUrl } = req;
+
+    if (!originalUrl.includes('comment') && !originalUrl.includes('like')) {
+      // POST DELETION - delete belonging likes and comments as well
+      await Like.deleteMany({ post: req.params.id });
+      await Comment.deleteMany({ post: req.params.id });
+    }
+
+    res.status(204).json({
+      status: 'success',
+      data: null,
+    });
+  });
